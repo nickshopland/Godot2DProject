@@ -23,7 +23,7 @@ window/stretch/mode="canvas_items"
 
 [dotnet]
 
-project/assembly_name="GodotProject"
+project/assembly_name="Godot2DProject"
 
 [input]
 
