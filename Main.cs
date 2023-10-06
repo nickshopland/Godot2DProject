@@ -29,10 +29,14 @@ public partial class Main : Node
         GetTree().CallGroup("mobs", Node.MethodName.QueueFree);
 
         GetNode<Timer>("StartTimer").Start();
+
+        GetNode<AudioStreamPlayer>("Music").Play();
     }
 
     public void GameOver()
     {
+        GetNode<AudioStreamPlayer>("Music").Stop();
+        GetNode<AudioStreamPlayer>("DeathSound").Play();
         GetNode<Timer>("MobTimer").Stop();
         GetNode<Timer>("ScoreTimer").Stop();
         GetNode<HUD>("HUD").ShowGameOver();
