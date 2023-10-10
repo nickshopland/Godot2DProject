@@ -6,52 +6,61 @@ public partial class Main : Node
     [Export] public PackedScene MobScene { get; set; }
 
     private int _score;
+    private Player _player;
+    private Marker2D _startPosition;
+    private Timer _startTimer, _mobTimer, _scoreTimer;
+    private AudioStreamPlayer _music, _deathSound;
+    private HUD _hud;
 
-    // public override void _Ready()
-    // {
-    //     NewGame();
-    // }
+    public override void _Ready()
+    {
+        _player = GetNode<Player>("Player");
+        _startPosition = GetNode<Marker2D>("StartPosition");
+        _startTimer = GetNode<Timer>("StartTimer");
+        _mobTimer = GetNode<Timer>("MobTimer");
+        _scoreTimer = GetNode<Timer>("ScoreTimer");
+        _music = GetNode<AudioStreamPlayer>("Music");
+        _deathSound = GetNode<AudioStreamPlayer>("DeathSound");
+        _hud = GetNode<HUD>("HUD");
+    }
 
     public void NewGame()
     {
         _score = 0;
 
-        var player = GetNode<Player>("Player");
-        var startPosition = GetNode<Marker2D>("StartPosition");
-        player.Start(startPosition.Position);
+        _player.Start(_startPosition.Position);
 
-        var hud = GetNode<HUD>("HUD");
-        hud.UpdateScore(_score);
-        hud.ShowMessage("Get Ready!");
+        _hud.UpdateScore(_score);
+        _hud.ShowMessage("Get Ready!");
 
         // Note that for calling Godot-provided methods with strings,
         // we have to use the original Godot snake_case name.
         GetTree().CallGroup("mobs", Node.MethodName.QueueFree);
 
-        GetNode<Timer>("StartTimer").Start();
+        _startTimer.Start();
 
-        GetNode<AudioStreamPlayer>("Music").Play();
+        _music.Play();
     }
 
     public void GameOver()
     {
-        GetNode<AudioStreamPlayer>("Music").Stop();
-        GetNode<AudioStreamPlayer>("DeathSound").Play();
-        GetNode<Timer>("MobTimer").Stop();
-        GetNode<Timer>("ScoreTimer").Stop();
-        GetNode<HUD>("HUD").ShowGameOver();
+        _music.Stop();
+        _deathSound.Play();
+        _mobTimer.Stop();
+        _scoreTimer.Stop();
+        _hud.ShowGameOver();
     }
 
     private void OnScoreTimerTimeout()
     {
         _score++;
-        GetNode<HUD>("HUD").UpdateScore(_score);
+        _hud.UpdateScore(_score);
     }
 
     private void OnStartTimerTimeout()
     {
-        GetNode<Timer>("MobTimer").Start();
-        GetNode<Timer>("ScoreTimer").Start();
+        _mobTimer.Start();
+        _scoreTimer.Start();
     }
 
     private void OnMobTimerTimeout()
